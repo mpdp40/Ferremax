@@ -1,0 +1,85 @@
+{% extends 'plantillabase.html' %}
+
+{% block title %}Registrar{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+  <h2>Registro de Usuario</h2>
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="id_username" class="form-label">Nombre de usuario</label>
+      {{ form.username }}
+      {% for error in form.username.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="mb-3">
+      <label for="id_email" class="form-label">Correo electrónico</label>
+      {{ form.email }}
+      {% for error in form.email.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="mb-3">
+      <label for="id_first_name" class="form-label">Nombre</label>
+      {{ form.first_name }}
+      {% for error in form.first_name.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="mb-3">
+      <label for="id_last_name" class="form-label">Apellido</label>
+      {{ form.last_name }}
+      {% for error in form.last_name.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="mb-3">
+      <label for="id_direccion" class="form-label">Dirección</label>
+      {{ form.direccion }}
+      {% for error in form.direccion.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+
+    <div class="mb-3">
+      <label for="id_telefono" class="form-label">Teléfono</label>
+      <input type="number" name="telefono" id="id_telefono" class="form-control" placeholder="Número de teléfono"
+        value="{{ form.telefono.value }}" required>
+      {% for error in form.telefono.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="mb-3">
+      <label for="id_fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
+      <input type="date" name="fecha_nacimiento" id="id_fecha_nacimiento" class="form-control"
+        value="{{ form.fecha_nacimiento.value }}" required>
+      {% for error in form.fecha_nacimiento.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="mb-3">
+      <label for="id_password1" class="form-label">Contraseña</label>
+      {{ form.password1 }}
+    </div>
+
+    <div class="mb-3">
+      <label for="id_password2" class="form-label">Confirmar contraseña</label>
+      {{ form.password2 }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrarse</button>
+  </form>
+</div>
+
+{% endblock %}

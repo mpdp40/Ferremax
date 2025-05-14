@@ -41,6 +41,10 @@ def registro(request):
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
             form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(request, username=username, password=raw_password)
+            login(request, user)
             return redirect('inicio')
         else:
             return render(request, 'registroU.html', {'form': form})
@@ -104,4 +108,5 @@ def eliminarC(request, producto_id):
         del carrito[str(producto_id)]
         request.session['carrito'] = carrito
     return redirect('vercarrito')
+
 

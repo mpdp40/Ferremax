@@ -18,9 +18,11 @@
 
       </div>
       {% if user.is_authenticated %}
+      <div><a href="{% url 'vercarrito' %}" class="bi bi-cart btn btn-warning"> Carrito</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menulateral">
         <span class="navbar-toggler-icon"></span>
       </button>
+      </div>
     </div>
   </nav>
 
@@ -29,6 +31,9 @@
     <div class="offcanvas-header">
       <h5 class="offcanvas-title">Menú</h5>
       <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div style="margin: 10px;" class="mx-auto">
+    <h5 style="justify-content: center;">Bienvenido {{user.username}}</h5>
     </div>
     <div class="offcanvas-body">
       <div class="d-grid gap-6 col-8 mx-auto">

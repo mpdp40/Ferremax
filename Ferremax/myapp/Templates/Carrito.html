@@ -33,6 +33,15 @@
         <div class="col-md-4">
             <div class="card" style="padding:20px; margin: 30px; border: 1px solid #000000;">
                 <p><strong>Total:</strong> ${{ total }}</p>
+                {% if user.is_authenticated %}
+                <div>
+                    {{ user.direccion }}
+                </div>
+                {% else %}
+                <div>
+                    cola direcion maquina
+                </div>
+                {% endif %}
                 <div class="text-end">
                     <a href="#" class="btn btn-primary btn-sm">Pagar</a>
                 </div>

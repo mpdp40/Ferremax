@@ -15,6 +15,7 @@
       <div class="d-flex">
         <a class="nav-link text-white ms-4" href="{% url 'inicio' %}">Inicio</a>
         <a class="nav-link text-white ms-2" href="{% url 'inventario' %}">Inventario</a>
+
       </div>
       {% if user.is_authenticated %}
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menulateral">
@@ -23,21 +24,25 @@
     </div>
   </nav>
 
-  <div class="offcanvas offcanvas-end bg-dark text-white" tabindex="-1" id="menulateral">
+  <div class="offcanvas offcanvas-end bg-dark text-white" tabindex="-1" id="menulateral"
+    style="--bs-offcanvas-width: 250px;">
     <div class="offcanvas-header">
       <h5 class="offcanvas-title">Menú</h5>
       <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body">
-      <div class="d-grid gap-2 col-4 mx-auto">
+      <div class="d-grid gap-6 col-8 mx-auto">
         <a href="#">Carrito</a>
         <a href="#">Perfil</a>
-      <a href="{% url 'Deslogearse' %}" class="btn btn-danger" style="justify-content: center;">Cerrar Sesion</a>
+        <a href="{% url 'Deslogearse' %}" class="btn btn-danger" style="justify-content: center;">Cerrar Sesion</a>
       </div>
     </div>
   </div>
   {% else %}
-  <a href="{% url 'login' %}" class="btn btn-primary">Iniciar Sesion</a>
+  <div>
+    <a href="{% url 'vercarrito' %}" class="bi bi-cart btn btn-warning"> Carrito</a>
+    <a href="{% url 'login' %}" class="btn btn-primary">Iniciar Sesion</a>
+  </div>
   </div>
   </nav>
   {% endif %}

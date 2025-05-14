@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="text-end">
-                <a href="{% url 'comprarPedidos' producto.id %}" class="btn btn-primary">Agregar al Carrito</a>  
+                <a href="{% url 'agregarC' producto.id %}?next={{ request.path }}" class="btn btn-primary">Agregar al Carrito</a>  
             </div>
         </div>
         </div>

@@ -1,0 +1,50 @@
+{% extends 'plantillabase.html' %}
+
+{% block title %}Carrito{% endblock %}
+
+{% block content %}
+<div class="container"
+    style="margin: 20px; padding: 20px; border: 1px solid #000000; border-radius: 8px; ">
+    <div class="row">
+        {% if productos %}
+        <div class="col-md-8">
+            <h1>Carrito de Compras</h1>
+            <div style="padding: 10px; border: 1px solid #000000; border-radius: 8px; ">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                </tr>
+                {% for item in productos %}
+                <tr>
+                    <td>{{ item.producto.nombre }}</td>
+                    <td>{{ item.cantidad }}</td>
+                    <td>${{ item.subtotal }}</td>
+                    <td>
+                        <a href="{% url 'eliminarCarrito' item.producto.id %}"
+                            class="btn btn-danger btn-sm">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card" style="padding:20px; margin: 30px; border: 1px solid #000000;">
+                <p><strong>Total:</strong> ${{ total }}</p>
+                <div class="text-end">
+                    <a href="#" class="btn btn-primary btn-sm">Pagar</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="">No tienes productos en el Carrito
+            <img src="https://t3.ftcdn.net/jpg/02/95/26/46/240_F_295264675_clwKZxogAhxLS9sD163Tgkz1WMHsq1RJ.jpg"
+                class="img-fluid rounded" alt="Logo de la empresa" style="width: 50px; height: 50px;">
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

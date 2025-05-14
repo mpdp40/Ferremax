@@ -73,3 +73,35 @@ def comprarPedidos(request,producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     form = ProductoForm(request.POST, instance=producto)
     return render(request, 'ComprarProducto.html', {'form': form, 'producto': producto})
+
+def agregarC(request, producto_id):
+    carrito = request.session.get('carrito', {})
+    carrito[str(producto_id)] = carrito.get(str(producto_id), 0) + 1
+    request.session['carrito'] = carrito
+    next_url = request.GET.get('next', 'vercarrito')
+    return redirect(next_url)
+
+def vercarrito(request):
+    carrito = request.session.get('carrito', {})
+    productos = []
+    total = 0
+
+    for producto_id, cantidad in carrito.items():
+        producto = get_object_or_404(Producto, id=producto_id)
+        subtotal = producto.precio * cantidad
+        total += subtotal
+        productos.append({
+            'producto': producto,
+            'cantidad': cantidad,
+            'subtotal': subtotal
+        })
+
+    return render(request, 'Carrito.html', {'productos': productos, 'total': total})
+
+def eliminarC(request, producto_id):
+    carrito = request.session.get('carrito', {})
+    if str(producto_id) in carrito:
+        del carrito[str(producto_id)]
+        request.session['carrito'] = carrito
+    return redirect('vercarrito')
+

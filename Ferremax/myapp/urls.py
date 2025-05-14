@@ -10,6 +10,7 @@ urlpatterns = [
     path('registro/', views.registro, name='registro'),
     path('login/', views.iniciarsession, name='login'),
     path('Deslogearse/', views.Deslogearse, name='Deslogearse'),
+    path('comprarPedidos<int:producto_id>/', views.comprarPedidos, name='comprarPedidos'),
 
     
 ]

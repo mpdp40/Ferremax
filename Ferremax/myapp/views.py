@@ -68,3 +68,8 @@ def iniciarsession(request):
 def Deslogearse(request):
     logout(request)
     return redirect('login')  
+
+def comprarPedidos(request,producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    form = ProductoForm(request.POST, instance=producto)
+    return render(request, 'ComprarProducto.html', {'form': form, 'producto': producto})

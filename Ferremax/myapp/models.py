@@ -15,9 +15,10 @@ class UsuarioPersonalizado(AbstractUser):
     fecha_nacimiento = models.DateField(blank=True, null=True)
 
 
-class venta(models.Model):
+class Venta(models.Model):
     id_cliente=models.IntegerField()
     fecha = models.DateTimeField(auto_now_add=True)
+    direcion= models.CharField(max_length=255)
     
     def total(self):
         return sum(item.subtotal() for item in self.items.all())
@@ -26,13 +27,12 @@ class venta(models.Model):
         return f"Venta #{self.id} - {self.fecha.strftime('%d/%m/%Y')}"
     
 class DetalleVenta(models.Model):
-    venta = models.ForeignKey(venta, related_name='items', on_delete=models.CASCADE)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    venta = models.ForeignKey(Venta, related_name='detalle', on_delete=models.CASCADE)
+    producto = models.CharField(max_length=100)
     cantidad = models.PositiveIntegerField()
     precioTotal = models.DecimalField(max_digits=10, decimal_places=2)
-    direcion= models.CharField()
     tipoenvio=models.IntegerField()
     estadopedido=models.IntegerField()
 
     def subtotal(self):
-        return self.cantidad * self.precio_unitario
+        return self.cantidad * self.precioTotal

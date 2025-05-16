@@ -3,31 +3,30 @@
 {% block title %}Carrito{% endblock %}
 
 {% block content %}
-<div class="container"
-    style="margin: 20px; padding: 20px; border: 1px solid #000000; border-radius: 8px; ">
+<div class="container" style="margin: 20px; padding: 20px; border: 1px solid #000000; border-radius: 8px; ">
     <div class="row">
         {% if productos %}
         <div class="col-md-8">
             <h1>Carrito de Compras</h1>
             <div style="padding: 10px; border: 1px solid #000000; border-radius: 8px; ">
-            <table class="table table-bordered">
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                </tr>
-                {% for item in productos %}
-                <tr>
-                    <td>{{ item.producto.nombre }}</td>
-                    <td>{{ item.cantidad }}</td>
-                    <td>${{ item.subtotal }}</td>
-                    <td>
-                        <a href="{% url 'eliminarCarrito' item.producto.id %}"
-                            class="btn btn-danger btn-sm">Eliminar</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                    </tr>
+                    {% for item in productos %}
+                    <tr>
+                        <td>{{ item.producto.nombre }}</td>
+                        <td>{{ item.cantidad }}</td>
+                        <td>${{ item.subtotal }}</td>
+                        <td>
+                            <a href="{% url 'eliminarCarrito' item.producto.id %}"
+                                class="btn btn-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
             </div>
         </div>
         <div class="col-md-4">
@@ -43,7 +42,20 @@
                 </div>
                 {% endif %}
                 <div class="text-end">
-                    <a href="#" class="btn btn-primary btn-sm">Pagar</a>
+                    <form method="POST" action="{% url 'agregarVenta' %}">
+                        {% csrf_token %}
+
+                        {% for item in productos %}
+                        <input type="hidden" name="producto[]" value="{{ item.producto.nombre }}">
+                        <input type="hidden" name="cantidad[]" value="{{ item.cantidad }}">
+                        <input type="hidden" name="precio_total[]" value="{{ item.subtotal }}">
+                        {% endfor %}
+
+                        <input type="hidden" name="id_cliente" value="{{ user.id }}">
+                        <input type="hidden" name="direccion" value="{{ user.direccion }}">
+
+                        <button type="submit" class="btn btn-primary btn-sm">Confirmar compra</button>
+                    </form>
                 </div>
             </div>
         </div>

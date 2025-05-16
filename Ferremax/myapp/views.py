@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Producto
+from .models import Producto,Venta, DetalleVenta
 from .forms import ProductoForm ,RegistroUsuarioForm,LoginForm
 from django.contrib.auth import authenticate, login,logout
+from datetime import datetime
 
 
 def inicio(request):
@@ -109,4 +110,27 @@ def eliminarC(request, producto_id):
         request.session['carrito'] = carrito
     return redirect('vercarrito')
 
+def agregarVenta(request):
+    if request.method == 'POST':
+       
+        id_cliente = request.POST.get('id_cliente')
+        direccion = request.POST.get('direccion')
+        productos = request.POST.getlist('producto[]')
+        cantidades = request.POST.getlist('cantidad[]')
+        precios = request.POST.getlist('precio_total[]')
+        
+        venta = Venta.objects.create(id_cliente=id_cliente,direcion=direccion)
 
+        for i in range(len(productos)):
+            DetalleVenta.objects.create(
+                venta=venta,
+                producto=productos[i],
+                cantidad=int(cantidades[i]),
+                precioTotal=float(precios[i]),
+                tipoenvio=1,
+                estadopedido=1
+            )
+
+        return redirect('inicio')
+
+    return redirect('vercarrito')

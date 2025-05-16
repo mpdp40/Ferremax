@@ -1,9 +1,11 @@
 from django.contrib import admin
-from .models import Producto
+from .models import Producto,DetalleVenta,Venta
 from django.contrib.auth.admin import UserAdmin
 from .models import UsuarioPersonalizado
 
 admin.site.register(Producto)
+admin.site.register(Venta)
+admin.site.register(DetalleVenta)
 
 
 class UsuarioPersonalizadoAdmin(UserAdmin):

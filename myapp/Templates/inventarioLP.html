@@ -25,6 +25,7 @@
                 <td>{{ producto.cantidad }}</td>
                 <td><a href="{% url 'editarP' producto.id %}" class="btn btn-primary">Editar</a></td>
                 <td>
+                    {% if request.user.Clase == 4 %}
                     <form action="{% url 'EliminarP' producto.id %}" method="POST" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger btn-sm"
@@ -32,6 +33,7 @@
                             Eliminar
                         </button>
                     </form>
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}
@@ -41,9 +43,10 @@
             {% endfor %}
         </tbody>
     </table>
+    {% if request.user.Clase == 4 %}
     <div class="d-grid gap-2 col-4 mx-auto">
         <a href="{% url 'agregarP'%}" class="btn btn-success" style="justify-content: center;">Agregar Producto</a>
     </div>
-
+    {% endif %}
 </div>
 {% endblock %}

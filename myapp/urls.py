@@ -19,4 +19,6 @@ urlpatterns = [
     path('Administrar-pedidos/', views.VerPedidos, name='VerPedidos'),
     path('Ordenes/<int:venta_id>/', views.detalle_venta, name='detalle_venta'),
     path('Cambiar-estado/<int:venta_id>/', views.Cestado, name='Cestado'),
+    path('E_detalle_envio/<int:detalle_id>/', views.E_detalle_envio, name='E_detalle_envio'),
+    path('Editar_envio/<int:detalle_id>/', views.Editar_envio, name='Editar_envio'),
 ]

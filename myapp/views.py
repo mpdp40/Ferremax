@@ -4,30 +4,61 @@ from .forms import ProductoForm ,RegistroUsuarioForm,LoginForm
 from django.contrib.auth import authenticate, login,logout
 from datetime import datetime
 from django.http import JsonResponse
-from paypalcheckoutsdk.orders import OrdersCreateRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.db.models import Sum
+from django.http import HttpResponseForbidden
+from functools import wraps
+
+
+TIPO_Cargos = [
+    (0, 'Cliente'),
+    (1, 'Vendedor'),
+    (2, 'Bodeguero'),
+    (3, 'Contador'),
+    (4, 'ADMIN'),
+]
+
+NOMBRE_A_CODIGO_CARGO = {nombre.lower(): codigo for codigo, nombre in TIPO_Cargos}
+
+def cargo_requerido(*nombres_cargos):
+    if len(nombres_cargos) == 1 and isinstance(nombres_cargos[0], (list, tuple)):
+        nombres_cargos = nombres_cargos[0]
+    def decorador(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            cargos_permitidos = []
+            for nombre in nombres_cargos:
+                if isinstance(nombre, str):
+                    codigo = NOMBRE_A_CODIGO_CARGO.get(nombre.lower())
+                    if codigo is not None:
+                        cargos_permitidos.append(codigo)
+                else:pass
+            if request.user.is_authenticated and request.user.Clase in cargos_permitidos:
+                return view_func(request, *args, **kwargs)
+            return HttpResponseForbidden("Acceso denegado.")
+        return _wrapped_view
+    return decorador
 
 def inicio(request):
     productos = Producto.objects.all()
     return render(request, 'index.html', {'productos': productos})
-
+@cargo_requerido('ADMIN','Bodeguero')
 def inventario(request):
     productos = Producto.objects.all()
     return render ( request, 'inventarioLP.html', {'productos': productos})
-
+@cargo_requerido('ADMIN','Vendedor','Contador','Bodeguero')
 def VerPedidos(request):
     ventas = Venta.objects.select_related('cliente').annotate(
         total_venta=Sum('detalle__precioTotal')
     )
     return render(request, 'VerPerdidos.html', {'ventas': ventas})
-
+@cargo_requerido('ADMIN')
 def EliminarP(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     producto.delete()
     return redirect('inventario') 
-
+@cargo_requerido('ADMIN')
 def agregarP(request):
     form = ProductoForm(request.POST)
     if form.is_valid():
@@ -35,7 +66,7 @@ def agregarP(request):
             return redirect('inventario')
     else:
         return render(request,'agregarP.html',{'form': form})
-    
+@cargo_requerido('ADMIN','Bodeguero') 
 def editarP(request, producto_id):
 
     producto = get_object_or_404(Producto, id=producto_id)
@@ -154,7 +185,7 @@ def agregarVenta(request):
         return redirect('inicio')
 
     return redirect('vercarrito')
-
+@cargo_requerido('ADMIN','Vendedor','Contador','Bodeguero')
 def detalle_venta(request, venta_id):
     venta = get_object_or_404(Venta, id=venta_id)
     detalles = venta.detalle.all()
@@ -162,20 +193,37 @@ def detalle_venta(request, venta_id):
         'venta': venta,
         'detalles': detalles
     })
-
+@cargo_requerido('ADMIN','Vendedor','Bodeguero')
 def Cestado(request, venta_id):
     if request.method == 'POST':
         venta = get_object_or_404(Venta, id=venta_id)  
         estado = int(request.POST.get('estadopedido')) 
         venta.estadopedido=estado
         venta.save()
-        venta.save()
         return redirect('detalle_venta', venta_id=venta_id)
     else:
         return redirect('detalle_venta', venta_id=venta_id)
+@cargo_requerido('ADMIN','Vendedor')
+def E_detalle_envio(request, detalle_id):
+    detalle = get_object_or_404(DetalleVenta, id=detalle_id)
+    venta_id = detalle.venta.id
+    venta = detalle.venta
+    detalle.delete()
+    if not venta.detalle.exists():
+        venta.delete()
+        return redirect('VerPedidos')
+    else:
+        return redirect('detalle_venta', venta_id=venta_id)
 
-
-
+def Editar_envio(request, detalle_id):
+    if request.method == 'POST':
+        Ventas = get_object_or_404(DetalleVenta, id=detalle_id)
+        tipo = int(request.POST.get('tipoenvio'))
+        Ventas.tipoenvio=tipo
+        Ventas.save()
+        return redirect('detalle_venta', venta_id=Ventas.venta.id)
+    else:
+        return redirect('detalle_venta', venta_id=Ventas.venta.id)
 
 
 

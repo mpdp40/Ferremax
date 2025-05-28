@@ -24,10 +24,35 @@
                 <td>${{ item.precioTotal }}</td>
                 <td>{% if item.tipoenvio == 0 %}Retiro en Tienda{% else %}Entrega a Domicilio{% endif %}</td>
                 <td>{{ item.venta.get_estadopedido_display }}</td>
+                {% if request.user.Clase == 4 or request.user.Clase == 1%}
+                <td style="width: 350px;">
+                        <form method="POST" action="{% url 'Editar_envio' item.id %} "class="d-flex align-items-center gap-2">
+                            {% csrf_token %}
+                                <label for="tipoenvio" class="me-2 mb-0 flex-shrink-0">Tipo de Envio</label>
+                                <select name="tipoenvio" id="tipoenvio" class="form-select form-select-sm me-1 flex-grow-0 " style="width: 150px;" required>
+                                    <option value=0 class="btn">Retiro en Tienda</option>
+                                    <option value=1 class="btn">Entrega a Domicilio</option>
+                                </select>
+                            </div>
+                                <button type="submit" class="btn btn-primary btn-sm flex-grow-2 flex-md-grow-0"style="width: 80px;">Enviar</button>
+                            </div>
+                        </form>
+                </td>
+                {% endif %}
+                <td>
+                    <form action="{% url 'E_detalle_envio' item.id %}" method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('¿Estás seguro que deseas eliminar este producto?');">
+                            Eliminar
+                        </button>
+                    </form>
+                </td>
             </tr>
         </tbody>
         {% endfor %}
     </table>
+    {% if request.user.Clase == 4 or request.user.Clase == 1 or request.user.Clase == 2%}
     <form method="POST" action="{% url 'Cestado' venta.id %}">
         {% csrf_token %}
         <div class="mb-3" style="width: 10%;">
@@ -42,5 +67,6 @@
         </div>
         <button type="submit" class="btn btn-primary">Actualizar estado</button>
     </form>
+    {% endif %}
 </div>
 {% endblock %}

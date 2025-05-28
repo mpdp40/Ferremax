@@ -10,12 +10,12 @@ admin.site.register(DetalleVenta)
 
 class UsuarioPersonalizadoAdmin(UserAdmin):
     model = UsuarioPersonalizado
-    list_display = ['username', 'email', 'first_name', 'last_name', 'fecha_nacimiento', 'telefono']
+    list_display = ['username', 'email','Clase', 'first_name', 'last_name', 'fecha_nacimiento', 'telefono']
     fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('fecha_nacimiento', 'telefono', 'direccion')}),
+        (None, {'fields': ('Clase','fecha_nacimiento', 'telefono', 'direccion')}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {'fields': ('fecha_nacimiento', 'telefono', 'direccion')}),
+        (None, {'fields': ('Clase','fecha_nacimiento', 'telefono', 'direccion')}),
     )
 
 admin.site.register(UsuarioPersonalizado, UsuarioPersonalizadoAdmin)

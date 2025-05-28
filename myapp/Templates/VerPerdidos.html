@@ -1,0 +1,34 @@
+{% extends 'plantillabase.html' %}
+
+{% block title %}Ordenes{% endblock %}
+
+{% block content %}
+<div style="margin: 3%; padding:20px; border: 1px solid #000000; border-radius: 8px;">
+    <h2>Ordenes </h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Fecha Pedido</th>
+                <th>Precio</th>
+                <th>Estado Pedido</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta.cliente.username }}</td>
+                <td>{{ venta.fecha }}</td>
+                <td>${{ venta.total_venta }}</td>
+                <td>{% if venta.tipoenvio == 0 %}Retiro en Tienda{% else %}Entrega a Domicilio{% endif %}</td>
+                <td style="justify-content: center;"><a href="{% url 'detalle_venta' venta.id %}"  class="bbi bi-box-arrow-in-down btn btn-warning" >Detalles</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No hay producto en el inventario.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

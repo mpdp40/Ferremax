@@ -1,0 +1,103 @@
+{% extends 'plantillabase.html' %}
+
+{% block title %}Carrito{% endblock %}
+
+{% block content %}
+{% load static %}
+<div class="container" style="margin: 20px; padding: 20px; border: 1px solid #000000; border-radius: 8px; ">
+    <div class="row">
+        {% if productos %}
+        <div class="col-md-8">
+            <h1>Carrito de Compras</h1>
+            <div style="padding: 10px; border: 1px solid #000000; border-radius: 8px; ">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                    </tr>
+                    {% for item in productos %}
+                    <tr>
+                        <td>{{ item.producto.nombre }}</td>
+                        <td>{{ item.cantidad }}</td>
+                        <td>${{ item.subtotal }}</td>
+                        <td>
+                            <a href="{% url 'eliminarCarrito' item.producto.id %}"
+                                class="btn btn-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card" style="padding:20px; margin: 30px; border: 1px solid #000000;">
+                <p><strong>Total:</strong> ${{ total }}</p>
+                {% if user.is_authenticated %}
+                <div>
+                    {{ user.direccion }}
+                </div>
+                {% else %}
+                <div>
+                    INICIA SESION!!!
+                </div>
+                {% endif %}
+                <div class="text-end">
+                    <form method="POST" action="{% url 'agregarVenta' %}">
+                        {% csrf_token %}
+
+                        {% for item in productos %}
+                        <input type="hidden" name="producto[]" value="{{ item.producto.nombre }}">
+                        <input type="hidden" name="cantidad[]" value="{{ item.cantidad }}">
+                        <input type="hidden" name="precio_total[]" value="{{ item.subtotal }}">
+                        {% endfor %}
+                        
+                        <input type="hidden" name="direccion" value="{{ user.direccion }}">
+
+                        <div class="mb-3">
+                            <label for="tipoenvio">Tipo de envío:</label>
+                            <select name="tipoenvio" id="tipoenvio" class="form-select" required>
+                                <option value=0>Retiro en tienda</option>
+                                {% if user.is_authenticated %}
+                                <option value=1>Envío a domicilio</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <script
+                            src="https://www.paypal.com/sdk/js?client-id=AZul6Qr-vvuUw7WXSIAsPTKjA2Kpv94YHDpN6GWICXK44oAL0oZ3Kl-7xNMhfrHd0nWjjeXQ9T7TkV1z&currency=USD"></script>
+                        <div id="paypal-button-container"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="">No tienes productos en el Carrito
+            <img src="https://t3.ftcdn.net/jpg/02/95/26/46/240_F_295264675_clwKZxogAhxLS9sD163Tgkz1WMHsq1RJ.jpg"
+                class="img-fluid rounded" alt="Logo de la empresa" style="width: 50px; height: 50px;">
+        </div>
+        {% endif %}
+    </div>
+</div>
+<script>
+    const totalCompra = "{{ total }}"; // asegúrate que total es un número válido
+
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: totalCompra
+                    }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                // Cuando el pago es aprobado, enviar el formulario
+                const form = document.querySelector('form');
+                form.submit(); // se envía el form a agregarVenta
+            });
+        }
+    }).render('#paypal-button-container');
+</script>
+{% endblock %}

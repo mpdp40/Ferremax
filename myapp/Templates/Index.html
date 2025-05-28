@@ -1,0 +1,47 @@
+{% extends 'plantillabase.html' %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="margin: 20px;">
+    <div class="row">
+        {% for producto in productos %}
+        {% if producto.cantidad > 0 %}
+        <div class="col-md-3 mb-4">
+            <div style=" border: 1px solid #000000; width: 300px; border-radius: 8px; padding: 20px;">
+                <div class="card">
+                    <div class="text-center">
+                        <img src="https://media.istockphoto.com/id/1409329028/es/vector/no-hay-imagen-disponible-marcador-de-posici%C3%B3n-miniatura-icono-dise%C3%B1o-de-ilustraci%C3%B3n.jpg?s=612x612&w=0&k=20&c=Bd89b8CBr-IXx9mBbTidc-wu_gtIj8Py_EMr3hGGaPw="
+                            class="img-fluid rounded" alt="Logo de la empresa" style="width: 200px; height: 200px;">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div style="margin-left: 20px;">
+                        {{ producto.nombre }} <br>
+                        Disponibles: {{ producto.cantidad }}<br>
+                        Precio: ${{ producto.precio }}<br>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <a href="{% url 'comprarPedidos' producto.id %}" class="btn btn-primary">Comprar</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% empty %}
+        <div class="container-fluid" style="padding: 20px;">
+            <div class="col-3 mx-auto">No hay productos en este momento
+                <img src="https://t3.ftcdn.net/jpg/02/95/26/46/240_F_295264675_clwKZxogAhxLS9sD163Tgkz1WMHsq1RJ.jpg"
+                    class="img-fluid rounded" alt="Logo de la empresa" style="width: 50px; height: 50px;">
+            </div>
+        </div>
+
+
+        {% endfor %}
+    </div>
+</div>
+
+
+
+{% endblock %}

@@ -4,27 +4,31 @@
 
 {% block content %}
 
-
-<div class="row" style="border: 1px solid #000000;  border-radius: 8px; padding: 20px; margin: 30px; height: 80%;">
-            <div class="col-3">
-                <div class="text-center">
-                    <img src="https://media.istockphoto.com/id/1409329028/es/vector/no-hay-imagen-disponible-marcador-de-posici%C3%B3n-miniatura-icono-dise%C3%B1o-de-ilustraci%C3%B3n.jpg?s=612x612&w=0&k=20&c=Bd89b8CBr-IXx9mBbTidc-wu_gtIj8Py_EMr3hGGaPw="
-                    class="img-fluid rounded" alt="Logo de la empresa" style="width: 400px; height: 400px;">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div style="margin-left: 20px;">
-                    {{ producto.nombre }} <br>
-                    Disponibles: {{ producto.cantidad }}<br>
-                    Precio: ${{ producto.precio }}<br>
-                    Descripcion: {{producto.descripcion}}
-                </div>
-            </div>
-            <div class="text-end">
-                <a href="{% url 'agregarC' producto.id %}?next={{ request.path }}" class="btn btn-primary">Agregar al Carrito</a>  
+<div style="border: 1px solid #000000; border-radius: 8px; padding: 20px; margin: 3%; height: 80%; ">
+    <div class="row" style="border-radius: 8px; padding: 20px; height: 80%;">
+        <div class="col-6">
+            <div class="text-center ">
+                <img src="https://media.istockphoto.com/id/1409329028/es/vector/no-hay-imagen-disponible-marcador-de-posici%C3%B3n-miniatura-icono-dise%C3%B1o-de-ilustraci%C3%B3n.jpg?s=612x612&w=0&k=20&c=Bd89b8CBr-IXx9mBbTidc-wu_gtIj8Py_EMr3hGGaPw="
+                    class="img-fluid rounded" alt="Logo de la empresa" style="height: 100%; width: 100%;">
             </div>
         </div>
+        <div class="col-3"></div>
+        <div class="col-md-3">
+            <div style="border: 1px solid #000000; border-radius: 8px; padding: 20px; margin: 30px;" class="shadow p-3">
+                <h1>{{ producto.nombre }}</h1>
+                <p>Disponibles: {{ producto.cantidad }}</p>
+                <p>Precio: ${{ producto.precio }}</p>
+                <div class="text-end">
+                    <a href="{% url 'agregarC' producto.id %}?next={{ request.path }}" class="btn btn-primary ">Agregar
+                        al Carrito</a>
+                </div>
+            </div>
         </div>
-
+    </div>
+    <div class="col-12 mt-4">
+        <h1>Descripcion</h1>
+        <p>{{ producto.descripcion }}</p>
+    </div>
+</div>
 
 {% endblock %}

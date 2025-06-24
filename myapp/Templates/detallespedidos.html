@@ -5,6 +5,9 @@
 {% block content %}
 <div style="margin: 3%; padding:20px; border: 1px solid #000000; border-radius: 8px;">
     <h2>Detalle Orden </h2>
+    {% if request.user.Clase == 4 or request.user.Clase == 3%}
+    <p>ID Transacion PayPal: {{ venta.paypal_transaction_id }}</p>
+    {% endif %}
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -25,48 +28,50 @@
                 <td>{% if item.tipoenvio == 0 %}Retiro en Tienda{% else %}Entrega a Domicilio{% endif %}</td>
                 <td>{{ item.venta.get_estadopedido_display }}</td>
                 {% if request.user.Clase == 4 or request.user.Clase == 1%}
-                <td style="width: 350px;">
-                        <form method="POST" action="{% url 'Editar_envio' item.id %} "class="d-flex align-items-center gap-2">
-                            {% csrf_token %}
-                                <label for="tipoenvio" class="me-2 mb-0 flex-shrink-0">Tipo de Envio</label>
-                                <select name="tipoenvio" id="tipoenvio" class="form-select form-select-sm me-1 flex-grow-0 " style="width: 150px;" required>
-                                    <option value=0 class="btn">Retiro en Tienda</option>
-                                    <option value=1 class="btn">Entrega a Domicilio</option>
-                                </select>
-                            </div>
-                                <button type="submit" class="btn btn-primary btn-sm flex-grow-2 flex-md-grow-0"style="width: 80px;">Enviar</button>
-                            </div>
-                        </form>
-                </td>
-                {% endif %}
-                <td>
-                    <form action="{% url 'E_detalle_envio' item.id %}" method="POST" style="display:inline;">
+                <td style="width: 300px;">
+                    <form method="POST" action="{% url 'Editar_envio' item.id %} "
+                        class="d-flex align-items-center gap-2">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm"
-                            onclick="return confirm('¿Estás seguro que deseas eliminar este producto?');">
-                            Eliminar
-                        </button>
-                    </form>
-                </td>
-            </tr>
-        </tbody>
-        {% endfor %}
-    </table>
-    {% if request.user.Clase == 4 or request.user.Clase == 1 or request.user.Clase == 2%}
-    <form method="POST" action="{% url 'Cestado' venta.id %}">
+                        <label for="tipoenvio" class="me-2 mb-0 flex-shrink-0">Tipo Envio</label>
+                        <select name="tipoenvio" id="tipoenvio" class="form-select form-select-sm me-1 flex-grow-0 "
+                            style="width: 150px;" required>
+                            <option value=0 class="btn">Retiro en Tienda</option>
+                            <option value=1 class="btn">Entrega a Domicilio</option>
+                        </select>
+</div>
+<button type="submit" class="btn btn-primary btn-sm flex-grow-2 flex-md-grow-0" style="width: 100px;">Actualizar</button>
+</div>
+</form>
+</td>
+{% endif %}
+<td>
+    <form action="{% url 'E_detalle_envio' item.id %}" method="POST" style="display:inline;">
         {% csrf_token %}
-        <div class="mb-3" style="width: 10%;">
-            <label for="estadopedido">Estado Pedido</label>
-            <select name="estadopedido" id="estadopedido" class="form-select" required>
-                <option value=1 class="btn btn-success">Aprobado</option>
-                <option value=3 class="btn btn-danger">Rechazado</option>
-                <option value=0 class="btn">Recibido</option>
-                <option value=2 class="btn">Enviado</option>
-                <option value=4 class="btn btn-warning">Preparando</option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Actualizar estado</button>
+        <button type="submit" class="btn btn-danger btn-sm"
+            onclick="return confirm('¿Estás seguro que deseas eliminar este producto?');">
+            Eliminar
+        </button>
     </form>
-    {% endif %}
+</td>
+</tr>
+</tbody>
+{% endfor %}
+</table>
+{% if request.user.Clase == 4 or request.user.Clase == 1 or request.user.Clase == 2%}
+<form method="POST" action="{% url 'Cestado' venta.id %}">
+    {% csrf_token %}
+    <div class="mb-3" style="width: 10%;">
+        <label for="estadopedido">Estado Pedido</label>
+        <select name="estadopedido" id="estadopedido" class="form-select" required>
+            <option value=1 class="btn btn-success">Aprobado</option>
+            <option value=3 class="btn btn-danger">Rechazado</option>
+            <option value=0 class="btn">Recibido</option>
+            <option value=2 class="btn">Enviado</option>
+            <option value=4 class="btn btn-warning">Preparando</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Actualizar estado</button>
+</form>
+{% endif %}
 </div>
 {% endblock %}

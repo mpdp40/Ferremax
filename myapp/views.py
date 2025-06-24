@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.db.models import Sum
 from django.http import HttpResponseForbidden
 from functools import wraps
-
+import requests
 
 TIPO_Cargos = [
     (0, 'Cliente'),
@@ -41,12 +41,28 @@ def cargo_requerido(*nombres_cargos):
     return decorador
 
 def inicio(request):
-    productos = Producto.objects.all()
+    url = 'http://localhost:8000/api/inventario/productos/'
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        productos = response.json()
+    except requests.RequestException as e:
+        productos = []
+        messages.error(request, f'No se pudieron cargar los productos: {e}')
+    
     return render(request, 'index.html', {'productos': productos})
 @cargo_requerido('ADMIN','Bodeguero')
 def inventario(request):
-    productos = Producto.objects.all()
-    return render ( request, 'inventarioLP.html', {'productos': productos})
+    url = 'http://localhost:8000/api/inventario/productos/'
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        productos = response.json()
+    except requests.RequestException as e:
+        productos = []
+        messages.error(request, f'No se pudieron cargar los productos: {e}')
+    
+    return render(request, 'inventarioLP.html', {'productos': productos})
 @cargo_requerido('ADMIN','Vendedor','Contador','Bodeguero')
 def VerPedidos(request):
     ventas = Venta.objects.select_related('cliente').annotate(
@@ -55,28 +71,49 @@ def VerPedidos(request):
     return render(request, 'VerPerdidos.html', {'ventas': ventas})
 @cargo_requerido('ADMIN')
 def EliminarP(request, producto_id):
-    producto = get_object_or_404(Producto, id=producto_id)
-    producto.delete()
-    return redirect('inventario') 
+    api_url = f'http://localhost:8000/api/inventario/productos/{producto_id}/'
+    requests.delete(api_url)
+    return redirect('inventario')
 @cargo_requerido('ADMIN')
 def agregarP(request):
-    form = ProductoForm(request.POST)
-    if form.is_valid():
-            form.save()
+    if request.method == 'POST':
+        form = ProductoForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            payload = {
+                'nombre': data['nombre'],
+                'descripcion': data['descripcion'],
+                'precio': data['precio'],
+                'cantidad': data['cantidad'],
+            }
+            requests.post('http://localhost:8000/api/inventario/productos/', json=payload)
             return redirect('inventario')
     else:
-        return render(request,'agregarP.html',{'form': form})
+        form = ProductoForm()
+    return render(request, 'agregarP.html', {'form': form})
 @cargo_requerido('ADMIN','Bodeguero') 
 def editarP(request, producto_id):
-
-    producto = get_object_or_404(Producto, id=producto_id)
-    form = ProductoForm(request.POST, instance=producto)
-    if form.is_valid():
-        form.save()
-        return redirect('inventario')
+    api_url = f'http://localhost:8000/api/inventario/productos/{producto_id}/'
+    if request.method == 'POST':
+        form = ProductoForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            payload = {
+                'nombre': data['nombre'],
+                'descripcion': data['descripcion'],
+                'precio': data['precio'],
+                'cantidad': data['cantidad'],
+            }
+            requests.put(api_url, json=payload)
+            return redirect('inventario')
     else:
-        form = ProductoForm(instance=producto)  
-    return render(request, 'editarP.html', {'form': form, 'producto': producto})
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            producto_data = response.json()
+            form = ProductoForm(initial=producto_data)
+        else:
+            form = ProductoForm()
+    return render(request, 'editarP.html', {'form': form, 'producto_id': producto_id})
 
 def registro(request):
     if request.method == 'POST':
@@ -115,15 +152,26 @@ def Deslogearse(request):
     logout(request)
     return redirect('login')  
 
-def comprarPedidos(request,producto_id):
-    producto = get_object_or_404(Producto, id=producto_id)
-    form = ProductoForm(request.POST, instance=producto)
-    return render(request, 'ComprarProducto.html', {'form': form, 'producto': producto})
+def comprarPedidos(request, producto_id):
+    api_url = f'http://localhost:8000/api/inventario/productos/{producto_id}/'
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        producto_data = response.json()
+        form = ProductoForm(initial=producto_data)
+    else:
+        form = ProductoForm()
+        producto_data = {}
+    return render(request, 'ComprarProducto.html', {'form': form, 'producto': producto_data})
 
 def agregarC(request, producto_id):
-    carrito = request.session.get('carrito', {})
-    carrito[str(producto_id)] = carrito.get(str(producto_id), 0) + 1
-    request.session['carrito'] = carrito
+    api_url = f'http://localhost:8000/api/inventario/productos/{producto_id}/'
+    response = requests.get(api_url)
+
+    if response.status_code == 200:
+        carrito = request.session.get('carrito', {})
+        carrito[str(producto_id)] = carrito.get(str(producto_id), 0) + 1
+        request.session['carrito'] = carrito
+
     next_url = request.GET.get('next', 'vercarrito')
     return redirect(next_url)
 
@@ -133,18 +181,23 @@ def vercarrito(request):
     total = 0
 
     for producto_id, cantidad in carrito.items():
-        producto = get_object_or_404(Producto, id=producto_id)
-        subtotal = producto.precio * cantidad
-        total += subtotal
-        productos.append({
-            'producto': producto,
-            'cantidad': cantidad,
-            'subtotal': subtotal
-        })
+        api_url = f'http://localhost:8000/api/inventario/productos/{producto_id}/'
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            producto_data = response.json()
+            precio = producto_data.get('precio', 0)
+            subtotal = precio * cantidad
+            total += subtotal
+            productos.append({
+                'producto': producto_data,
+                'cantidad': cantidad,
+                'subtotal': subtotal
+            })
+        else:
+            pass
 
     context = {
-        'total_compra': f"{total:.2f}",  # FORMATEA a string con 2 decimales
-        # otros datos
+        'total_compra': f"{total:.2f}"
     }
     return render(request, 'Carrito.html', {'productos': productos, 'total': total})
 
@@ -154,29 +207,36 @@ def eliminarC(request, producto_id):
         del carrito[str(producto_id)]
         request.session['carrito'] = carrito
     return redirect('vercarrito')
-
+@csrf_exempt
 def agregarVenta(request):
     if request.method == 'POST':
-       
         user = request.user
         direccion = request.POST.get('direccion')
         productos = request.POST.getlist('producto[]')
         cantidades = request.POST.getlist('cantidad[]')
         precios = request.POST.getlist('precio_total[]')
-        tipoenvio = int(request.POST.get('tipoenvio'))  
+        tipoenvio = int(request.POST.get('tipoenvio'))
+        transaction_id = request.POST.get('paypal_transaction_id')
 
-        venta = Venta.objects.create(cliente=user,direcion=direccion)
+        venta = Venta.objects.create(cliente=user, direcion=direccion, paypal_transaction_id=transaction_id)
 
         for i in range(len(productos)):
             nombre_producto = productos[i]
-            producto = Producto.objects.get(nombre=nombre_producto)
             cantidad_vendida = int(cantidades[i])
-            producto.cantidad -= cantidad_vendida
-            producto.save()
+            url = f'http://localhost:8000/api/inventario/productos/?nombre={nombre_producto}'
+            response = requests.get(url)
+            producto_data = None
+            if response.status_code == 200:
+                resultados = response.json()
+                items = resultados.get('results', resultados) if isinstance(resultados, dict) else resultados
+                for item in items:
+                    if item['nombre'] == nombre_producto:
+                        producto_data = item
+                        break
             DetalleVenta.objects.create(
                 venta=venta,
-                producto=productos[i],
-                cantidad=int(cantidades[i]),
+                producto=nombre_producto,
+                cantidad=cantidad_vendida,
                 precioTotal=float(precios[i]),
                 tipoenvio=tipoenvio
             )

@@ -93,9 +93,15 @@
         },
         onApprove: function(data, actions) {
             return actions.order.capture().then(function(details) {
-                // Cuando el pago es aprobado, enviar el formulario
+                const transactionId = details.id;
+                console.log("ID Transacción:", transactionId); 
                 const form = document.querySelector('form');
-                form.submit(); // se envía el form a agregarVenta
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'paypal_transaction_id';
+                input.value = transactionId;
+                form.appendChild(input);
+                form.submit();
             });
         }
     }).render('#paypal-button-container');

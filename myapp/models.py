@@ -5,8 +5,8 @@ from django.conf import settings
 class Producto(models.Model):
     nombre= models.CharField(max_length=100)
     descripcion= models.TextField()
-    precio=models.IntegerField()
-    cantidad=models.IntegerField()
+    precio=models.PositiveIntegerField()
+    cantidad=models.PositiveIntegerField()
     def __str__(self):
         return self.nombre
 
@@ -37,7 +37,7 @@ class Venta(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     direcion= models.CharField(max_length=255)
     estadopedido=models.IntegerField(choices=ESTADOS_PEDIDO, default=0)
-    
+    paypal_transaction_id = models.CharField(max_length=100)
     def total(self):
         return sum(item.subtotal() for item in self.items.all())
 

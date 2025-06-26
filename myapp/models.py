@@ -7,9 +7,10 @@ class Producto(models.Model):
     descripcion= models.TextField()
     precio=models.PositiveIntegerField()
     cantidad=models.PositiveIntegerField()
+    imagen_url = models.URLField(blank=True, null=True) 
     def __str__(self):
         return self.nombre
-
+    
 TIPO_Cargos = [
     (0, 'Cliente'),
     (1, 'Vendedor'),

@@ -48,7 +48,6 @@ def inicio(request):
         productos = response.json()
     except requests.RequestException as e:
         productos = []
-        messages.error(request, f'No se pudieron cargar los productos: {e}')
     
     return render(request, 'index.html', {'productos': productos})
 @cargo_requerido('ADMIN','Bodeguero')
@@ -60,8 +59,7 @@ def inventario(request):
         productos = response.json()
     except requests.RequestException as e:
         productos = []
-        messages.error(request, f'No se pudieron cargar los productos: {e}')
-    
+
     return render(request, 'inventarioLP.html', {'productos': productos})
 @cargo_requerido('ADMIN','Vendedor','Contador','Bodeguero')
 def VerPedidos(request):
@@ -85,6 +83,7 @@ def agregarP(request):
                 'descripcion': data['descripcion'],
                 'precio': data['precio'],
                 'cantidad': data['cantidad'],
+                'imagen_url':data['imagen_url'],
             }
             requests.post('http://localhost:8000/api/inventario/productos/', json=payload)
             return redirect('inventario')
@@ -103,6 +102,7 @@ def editarP(request, producto_id):
                 'descripcion': data['descripcion'],
                 'precio': data['precio'],
                 'cantidad': data['cantidad'],
+                'imagen_url':data['imagen_url'],
             }
             requests.put(api_url, json=payload)
             return redirect('inventario')

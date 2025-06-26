@@ -7,7 +7,7 @@ import re
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = ['nombre', 'descripcion', 'precio', 'cantidad']
+        fields = ['nombre', 'descripcion', 'precio', 'cantidad', 'imagen_url']
     descripcion = forms.CharField(widget=forms.Textarea(attrs={'rows': 2, 'cols': 60}))
 
 

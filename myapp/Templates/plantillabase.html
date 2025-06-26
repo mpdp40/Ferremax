@@ -1,3 +1,4 @@
+{% load static %}
 <html lang="es">
 
 <head>
@@ -15,8 +16,11 @@
       <div class="d-flex">
         <a class="nav-link text-white ms-4" href="{% url 'inicio' %}">Inicio</a>
         {% if request.user.Clase == 4 or request.user.Clase == 2 %}
-        <a class="nav-link text-white ms-2" href="{% url 'inventario' %}">Inventario</a>
+        <a class="nav-link text-white ms-4" href="{% url 'inventario' %}">Inventario</a>
         {% endif %}
+        <div class="text-center">
+          <img src="{% static 'imagenes/Logo.png' %}" alt="Logo Amarillo" style="width: 20%;" />
+        </div>
       </div>
       {% if user.is_authenticated %}
       <div>
@@ -44,7 +48,8 @@
         {% if request.user.Clase == 4 or request.user.Clase == 3 or request.user.Clase == 1 or request.user.Clase == 2%}
         <a href="{% url 'VerPedidos' %}" class="bi bi-archive btn btn-warning" style="margin-top: 10px;"> Ordenes</a>
         {% endif %}
-        <a href="{% url 'Deslogearse' %}" class="btn btn-danger" style="justify-content: center; margin-top: 10px;">Cerrar Sesion</a>
+        <a href="{% url 'Deslogearse' %}" class="btn btn-danger"
+          style="justify-content: center; margin-top: 10px;">Cerrar Sesion</a>
       </div>
     </div>
   </div>

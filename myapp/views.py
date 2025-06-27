@@ -1,15 +1,20 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Producto,Venta, DetalleVenta
+from .models import Producto,Venta, DetalleVenta,TIPO_Cargos
 from .forms import ProductoForm ,RegistroUsuarioForm,LoginForm
 from django.contrib.auth import authenticate, login,logout
 from datetime import datetime
+from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.db.models import Sum
 from django.http import HttpResponseForbidden
 from functools import wraps
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from myapp.models import UsuarioPersonalizado
 import requests
+from django.http import Http404
 
 TIPO_Cargos = [
     (0, 'Cliente'),
@@ -284,20 +289,39 @@ def Editar_envio(request, detalle_id):
         return redirect('detalle_venta', venta_id=Ventas.venta.id)
     else:
         return redirect('detalle_venta', venta_id=Ventas.venta.id)
+@cargo_requerido('ADMIN')
+def listarUsurios(request):
+    usuarios = UsuarioPersonalizado.objects.all()
+    return render(request, 'EditarRoles.html', {'usuarios': usuarios})
+@cargo_requerido('ADMIN')
+def editarUsuario(request,Usuario_id):
+    usuario = get_object_or_404(UsuarioPersonalizado, id=Usuario_id)
+    nuevo_cargo = request.POST.get('Clase')
+    if nuevo_cargo is not None:
+        usuario.Clase = int(nuevo_cargo)
+        usuario.save()
+        return redirect('listarUsurios')
+    return render(request, 'EditarPerfilUsuario.html', {'usuario': usuario, 'TIPO_Cargos': TIPO_Cargos})
 
+def CambiarPerfil(request):
+    usuario = request.user
+    return render(request, 'Miperfil.html', {'usuario': usuario})
 
+def VerMisPedidos(request):
+    usuario = request.user
+    compras = Venta.objects.filter(cliente=usuario).annotate(
+        total_venta=Sum('detalle__precioTotal'))
+    
+    return render(request, 'MisCompras.html', {'compras': compras})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+def DetalleVentaUsuario(request, venta_id):
+    try:
+        venta = get_object_or_404(Venta, id=venta_id,cliente=request.user)
+        detalles = venta.detalle.all()
+    except Http404:
+        return render(request, 'detallespedidosUsuario.html')
+    return render(request, 'detallespedidosUsuario.html', {
+        'venta': venta,
+        'detalles': detalles
+    })
 

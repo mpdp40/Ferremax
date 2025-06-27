@@ -1,0 +1,37 @@
+{% extends 'plantillabase.html' %}
+
+{% block title %}Detalle Compras{% endblock %}
+
+{% block content %}
+<div style="width: 50%; margin-left: 25%; margin-block-end: 10%; margin-top: 4%; border: 1px solid #000000; border-radius: 8px; padding: 20px;">
+    {% if venta %}
+    <h2>Detalle Compra </h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>producto</th>
+                <th>Cantidad</th>
+                <th>Precio Total</th>
+                <th>Tipo de Envio</th>
+                <th>Estado pedido</th>
+            </tr>
+        </thead>
+        {% for item in detalles %}
+        <tbody>
+            <tr>
+                <td>{{ item.producto }}</td>
+                <td>{{ item.cantidad }}</td>
+                <td>${{ item.precioTotal }}</td>
+                <td>{% if item.tipoenvio == 0 %}Retiro en Tienda{% else %}Entrega a Domicilio{% endif %}</td>
+                <td>{{ item.venta.get_estadopedido_display }}</td>
+        </tbody>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="text-center">
+        <h1>No es tu compra</h1>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

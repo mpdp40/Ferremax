@@ -1,0 +1,20 @@
+{% extends 'plantillabase.html' %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+{% load static %}
+<div style="width: 80%; margin-left: 10%; margin-top: 2%; margin-block-end: 5%;">
+    <h2>{{ usuario.username }}</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="clase">Cambiar Cargo:</label>
+        <select name="Clase" id="clase" class="form-select form-select-sm me-1 flex-grow-0" style="width: 300px;">
+            {% for valor, nombre in TIPO_Cargos %}
+            <option value="{{ valor }}" {% if usuario.Clase == valor %}selected{% endif %}>{{ nombre }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="bi bi-archive btn btn-warning">Guardar</button>
+    </form>
+</div>
+{% endblock %}

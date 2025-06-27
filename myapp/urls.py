@@ -21,4 +21,9 @@ urlpatterns = [
     path('Cambiar-estado/<int:venta_id>/', views.Cestado, name='Cestado'),
     path('E_detalle_envio/<int:detalle_id>/', views.E_detalle_envio, name='E_detalle_envio'),
     path('Editar_envio/<int:detalle_id>/', views.Editar_envio, name='Editar_envio'),
+    path('DetallesUsuario/', views.listarUsurios, name='listarUsurios'),
+    path('EditarUsuario/<int:Usuario_id>/', views.editarUsuario, name='editarUsuario'),
+    path('EditarMiPerfil/', views.CambiarPerfil, name='CambiarPerfil'),
+    path('VerMisPedidos/', views.VerMisPedidos, name='VerMisPedidos'),
+    path('DetalleCompra/<int:venta_id>/', views.DetalleVentaUsuario, name='DetalleVentaUsuario'),
 ]

@@ -1,0 +1,35 @@
+{% extends 'plantillabase.html' %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+{% load static %}
+<div style="width: 80%; margin-left: 10%; margin-top: 2%; margin-block-end: 5%;">
+    <h2>Usuarios</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Tipo Usuario</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.id }}</td>
+                <td>{{ usuario.username }}</td>
+                <td>{{ usuario.email }}</td>
+                <td>{{ usuario.get_Clase_display }}</td>
+                <td><a href="{% url 'editarUsuario' usuario.id %}" class="btn btn-primary">Editar</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No hay Usuarios</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

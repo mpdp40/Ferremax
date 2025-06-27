@@ -1,0 +1,20 @@
+{% extends 'plantillabase.html' %}
+
+{% block title %}Perfil{% endblock %}
+
+{% block content %}
+{% load static %}
+<div style="width: 80%; margin-left: 10%; margin-block-end: 22%; margin-top: 2%; border: 1px solid #000000; border-radius: 8px; padding: 20px; background-color: bisque;">
+    <h1>Perfil: {{ usuario.username }}</h1>
+    <div>
+        <p>Nombre: {{ usuario.first_name }}</p>
+        <p>Apellido: {{ usuario.last_name }}</p>
+        <p>Email: {{ usuario.email }}</p>
+        <p>Numero: {{ usuario.telefono }}</p>
+        <p>Fecha de nacimiento: {{ usuario.fecha_nacimiento }}</p>
+        <p>Direccion: {{ usuario.direccion }}</p>
+        <p>Cargo: {{ usuario.get_Clase_display }}</p>
+    </div>
+
+</div>
+{% endblock %}

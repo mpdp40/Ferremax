@@ -14,13 +14,13 @@
   <nav class="navbar  navbar-dark bg-dark">
     <div class="container-fluid">
       <div class="d-flex">
-        <a class="nav-link text-white ms-4" href="{% url 'inicio' %}">Inicio</a>
+        <a class="navbar-brand ms-4" href="{% url 'inicio' %}">
+          <img src="{% static 'imagenes/Logo.png' %}" alt="Logo Amarillo" width="100"
+            class="d-inline-block align-text-top">
+        </a>
         {% if request.user.Clase == 4 or request.user.Clase == 2 %}
         <a class="nav-link text-white ms-4" href="{% url 'inventario' %}">Inventario</a>
         {% endif %}
-        <div class="text-center">
-          <img src="{% static 'imagenes/Logo.png' %}" alt="Logo Amarillo" style="width: 20%;" />
-        </div>
       </div>
       {% if user.is_authenticated %}
       <div>
@@ -44,9 +44,15 @@
     </div>
     <div class="offcanvas-body">
       <div class="d-grid gap-6 col-8 mx-auto">
-        <a href="#" class="bi bi-person-fill btn btn-warning" style="margin-top: 10px;"> Perfil</a>
+        <a href="{% url 'CambiarPerfil' %}" class="bi bi-person-fill btn btn-warning" style="margin-top: 10px;">
+          Perfil</a>
+        <a href="{% url 'VerMisPedidos' %}" class="btn btn-warning" style="margin-top: 10px;"> Mis Compras</a>
         {% if request.user.Clase == 4 or request.user.Clase == 3 or request.user.Clase == 1 or request.user.Clase == 2%}
         <a href="{% url 'VerPedidos' %}" class="bi bi-archive btn btn-warning" style="margin-top: 10px;"> Ordenes</a>
+        {% endif %}
+        {% if request.user.Clase == 4 %}
+        <a href="{% url 'listarUsurios' %}" class="bi bi-archive btn btn-warning" style="margin-top: 10px;">
+          Usuarios</a>
         {% endif %}
         <a href="{% url 'Deslogearse' %}" class="btn btn-danger"
           style="justify-content: center; margin-top: 10px;">Cerrar Sesion</a>

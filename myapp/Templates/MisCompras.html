@@ -1,0 +1,36 @@
+{% extends 'plantillabase.html' %}
+
+{% block title %}Mis Compras{% endblock %}
+
+{% block content %}
+<div style="width: 50%; margin-left: 25%; margin-block-end: 10%; margin-top: 4%; border: 1px solid #000000; border-radius: 8px; padding: 20px;">
+    {% if compras %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="width: 11%;">ID Compra</th>
+                <th >Fecha de Compra</th>
+                <th >Precio total</th>
+                <th>Estado Pedido</th>
+                <th>Mas Informacion</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for compra in compras %}
+            <tr>
+                <td>{{ compra.id }} </td>
+                <td>{{ compra.fecha }}</td>
+                <td>${{ compra.total_venta }}</td>
+                <td>{{ compra.get_estadopedido_display }}</td>
+                <td style="justify-content: center;"><a href="{% url 'DetalleVentaUsuario' compra.id %}"  class="bbi bi-box-arrow-in-down btn btn-warning" >Detalles</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h1>No tienes compras</h1>
+    {% endif %}
+</div>
+
+
+{% endblock %}
